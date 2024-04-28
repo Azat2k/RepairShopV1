@@ -1,4 +1,4 @@
-﻿namespace RepairShopV1.Entities
+﻿namespace RepairShopV1.Models
 {
     public class Part
     {

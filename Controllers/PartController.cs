@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RepairShopV1.Data;
-using RepairShopV1.Entities;
+using RepairShopV1.Models;
 using RepairShopV1.Services;
 
 namespace RepairShopV1.Controllers
