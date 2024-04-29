@@ -5,14 +5,14 @@ using RepairShopV1.Data;
 using RepairShopV1.Models;
 using RepairShopV1.Services;
 
-namespace RepairShopV1.Controllers
+namespace RepairShopV1.api
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PartController : ControllerBase
+    public class PartApi : ControllerBase
     {
         private readonly IPartService _partService;
-        public PartController(IPartService partService)
+        public PartApi(IPartService partService)
         {
             _partService = partService;
         }
@@ -31,7 +31,7 @@ namespace RepairShopV1.Controllers
         public async Task<ActionResult<List<Part>>> GetPartById(int Id)
         {
             var parts = await _partService.GetByIdAsync(Id);
-            if (parts is null) 
+            if (parts is null)
             {
                 return NotFound("Part not found.");
             }
