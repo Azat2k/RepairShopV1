@@ -19,12 +19,28 @@ namespace RepairShopV1.Services
 
         public async Task<List<Part>> GetAllAsync()
         {
-            return await _context.Parts.ToListAsync();
+            try
+            {
+                return await _context.Parts.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                // Логирование ошибки или другие действия по обработке исключения
+                throw new ApplicationException("An error occurred while retrieving parts.", ex);
+            }
         }
 
         public async Task<Part> GetByIdAsync(int Id)
         {
-            return await _context.Parts.FindAsync(Id);
+            try
+            {
+                return await _context.Parts.FindAsync(Id);
+            }
+            catch (Exception ex)
+            {
+                // Логирование ошибки или другие действия по обработке исключения
+                throw new ApplicationException($"An error occurred while retrieving part with ID {Id}.", ex);
+            }
         }
 
         public async Task<Part> AddAsync(Part part)
@@ -39,9 +55,17 @@ namespace RepairShopV1.Services
                 throw new ValidationException("The part model is not valid.");
             }
 
-            _context.Parts.Add(part);
-            await _context.SaveChangesAsync();
-            return part;
+            try
+            {
+                _context.Parts.Add(part);
+                await _context.SaveChangesAsync();
+                return part;
+            }
+            catch (Exception ex)
+            {
+                // Логирование ошибки или другие действия по обработке исключения
+                throw new ApplicationException("An error occurred while adding a new part.", ex);
+            }
         }
 
         public async Task<Part> UpdateAsync(Part part)
@@ -56,18 +80,34 @@ namespace RepairShopV1.Services
                 throw new ValidationException("The part model is not valid.");
             }
 
-            _context.Entry(part).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
-            return part;
+            try
+            {
+                _context.Entry(part).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+                return part;
+            }
+            catch (Exception ex)
+            {
+                // Логирование ошибки или другие действия по обработке исключения
+                throw new ApplicationException($"An error occurred while updating part with ID {part.Id}.", ex);
+            }
         }
 
         public async Task DeleteAsync(int Id)
         {
-            var part = await _context.Parts.FindAsync(Id);
-            if (part != null)
+            try
             {
-                _context.Parts.Remove(part);
-                await _context.SaveChangesAsync();
+                var part = await _context.Parts.FindAsync(Id);
+                if (part != null)
+                {
+                    _context.Parts.Remove(part);
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                // Логирование ошибки или другие действия по обработке исключения
+                throw new ApplicationException($"An error occurred while deleting part with ID {Id}.", ex);
             }
         }
 
