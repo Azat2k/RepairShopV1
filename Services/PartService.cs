@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using RepairShopV1.Data;
 using RepairShopV1.Models;
 using System;
@@ -17,106 +18,36 @@ namespace RepairShopV1.Services
             _context = context;
         }
 
-        public async Task<List<Part>> GetAllAsync()
+        public async Task<List<Part>> GetAllParts()
         {
-            try
-            {
-                return await _context.Parts.ToListAsync();
-            }
-            catch (Exception ex)
-            {
-                // Логирование ошибки или другие действия по обработке исключения
-                throw new ApplicationException("An error occurred while retrieving parts.", ex);
-            }
+            return await _context.Parts.ToListAsync();
         }
 
-        public async Task<Part> GetByIdAsync(int Id)
+        public async Task<Part> GetPartById(int id)
         {
-            try
-            {
-                return await _context.Parts.FindAsync(Id);
-            }
-            catch (Exception ex)
-            {
-                // Логирование ошибки или другие действия по обработке исключения
-                throw new ApplicationException($"An error occurred while retrieving part with ID {Id}.", ex);
-            }
+            return await _context.Parts.FirstOrDefaultAsync(p => p.Id == id);
         }
 
-        public async Task<Part> AddAsync(Part part)
+        public async Task CreatePart(Part part)
         {
-            if (part == null)
-            {
-                throw new ArgumentNullException(nameof(part));
-            }
+            _context.Parts.Add(part);
+            await _context.SaveChangesAsync();
+        }
 
-            if (!ValidatePart(part))
-            {
-                throw new ValidationException("The part model is not valid.");
-            }
+        public async Task UpdatePart(Part part)
+        {
+            _context.Entry(part).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+        }
 
-            try
+        public async Task DeletePart(int id)
+        {
+            var partToDelete = await _context.Parts.FindAsync(id);
+            if (partToDelete != null)
             {
-                _context.Parts.Add(part);
+                _context.Parts.Remove(partToDelete);
                 await _context.SaveChangesAsync();
-                return part;
             }
-            catch (Exception ex)
-            {
-                // Логирование ошибки или другие действия по обработке исключения
-                throw new ApplicationException("An error occurred while adding a new part.", ex);
-            }
-        }
-
-        public async Task<Part> UpdateAsync(Part part)
-        {
-            if (part == null)
-            {
-                throw new ArgumentNullException(nameof(part));
-            }
-
-            if (!ValidatePart(part))
-            {
-                throw new ValidationException("The part model is not valid.");
-            }
-
-            try
-            {
-                _context.Entry(part).State = EntityState.Modified;
-                await _context.SaveChangesAsync();
-                return part;
-            }
-            catch (Exception ex)
-            {
-                // Логирование ошибки или другие действия по обработке исключения
-                throw new ApplicationException($"An error occurred while updating part with ID {part.Id}.", ex);
-            }
-        }
-
-        public async Task DeleteAsync(int Id)
-        {
-            try
-            {
-                var part = await _context.Parts.FindAsync(Id);
-                if (part != null)
-                {
-                    _context.Parts.Remove(part);
-                    await _context.SaveChangesAsync();
-                }
-            }
-            catch (Exception ex)
-            {
-                // Логирование ошибки или другие действия по обработке исключения
-                throw new ApplicationException($"An error occurred while deleting part with ID {Id}.", ex);
-            }
-        }
-
-        // Метод для валидации модели Part
-        private bool ValidatePart(Part part)
-        {
-            var validationContext = new ValidationContext(part);
-            var validationResults = new List<ValidationResult>();
-            return Validator.TryValidateObject(part, validationContext, validationResults, true);
         }
     }
 }

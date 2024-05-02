@@ -4,10 +4,10 @@ namespace RepairShopV1.Services
 {
     public interface IPartService
     {
-        Task<List<Part>> GetAllAsync();
-        Task<Part> GetByIdAsync(int Id);
-        Task<Part> AddAsync(Part part);
-        Task<Part> UpdateAsync(Part part);
-        Task DeleteAsync(int Id);
+        Task<List<Part>> GetAllParts();
+        Task<Part> GetPartById(int id);
+        Task CreatePart(Part part);
+        Task UpdatePart(Part part);
+        Task DeletePart(int id);
     }
 }
