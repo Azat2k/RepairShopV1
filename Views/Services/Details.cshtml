@@ -1,4 +1,4 @@
-﻿@model RepairShopV1.Models.Part
+﻿@model RepairShopV1.Models.Service
 
 @{
     ViewData["Title"] = "Details";
@@ -7,15 +7,9 @@
 <h1>Details</h1>
 
 <div>
-    <h4>Part</h4>
+    <h4>Service</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PartNumber)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PartNumber)
-        </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Name)
         </dt>
@@ -29,22 +23,22 @@
             @Html.DisplayFor(model => model.Description)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Price)
+            @Html.DisplayNameFor(model => model.LaborHours)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Price)
+            @Html.DisplayFor(model => model.LaborHours)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SellPrice)
+            @Html.DisplayNameFor(model => model.LaborPrice)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SellPrice)
+            @Html.DisplayFor(model => model.LaborPrice)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ServiceId)
+            @Html.DisplayNameFor(model => model.PartId)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ServiceId)
+            @Html.DisplayFor(model => model.PartId)
         </dd>
     </dl>
 </div>

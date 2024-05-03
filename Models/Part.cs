@@ -8,7 +8,7 @@
         public string Description { get; set; } = string.Empty;
         public decimal Price { get; set; }
         public decimal SellPrice { get; set; }
-        public int ServiceID { get; set; }
+        public int ServiceId { get; set; }
         public List<Service>? Services { get; set; }
     }
 }
