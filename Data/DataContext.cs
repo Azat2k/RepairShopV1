@@ -11,5 +11,6 @@ namespace RepairShopV1.Data
 
         }
         public DbSet<Part> Parts { get; set; }
+        public DbSet<Service> Services { get; set; }
     }
 }
