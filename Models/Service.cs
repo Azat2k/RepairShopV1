@@ -7,7 +7,6 @@
         public string Description { get; set; } = string.Empty;
         public DateTime LaborHours { get; set; }
         public decimal LaborPrice { get; set; }
-        public int PartId { get; set; }
         public List<PartService>? PartServices { get; set; }
         //public int EmployerId { get; set; }
     }

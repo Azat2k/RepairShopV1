@@ -1,24 +1,34 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using RepairShopV1.Models;
-using RepairShopV1.Services;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using RepairShopV1.Data;
+using RepairShopV1.Models;
 
 namespace RepairShopV1.Controllers
 {
     public class PartsController : Controller
     {
-        private readonly IPartService _partService;
+        private readonly DataContext _context;
 
-        public PartsController(IPartService partService)
+        public PartsController(DataContext context)
         {
-            _partService = partService;
+            _context = context;
         }
 
         // GET: Parts
         public async Task<IActionResult> Index()
         {
-            var parts = await _partService.GetAllParts();
+            var parts = await _context.Parts
+                .Include(p => p.PartServices)
+                .ThenInclude(ps => ps.Service)
+                .ToListAsync();
             return View(parts);
+            //return View(_context.Parts.Include(p => p.PartServices).ThenInclude(ps => ps.Service).ToListAsync());
+            //return View(await _context.Parts.ToListAsync());
         }
 
         // GET: Parts/Details/5
@@ -29,7 +39,8 @@ namespace RepairShopV1.Controllers
                 return NotFound();
             }
 
-            var part = await _partService.GetPartById(id.Value);
+            var part = await _context.Parts
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (part == null)
             {
                 return NotFound();
@@ -45,21 +56,17 @@ namespace RepairShopV1.Controllers
         }
 
         // POST: Parts/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,PartNumber,Name,Description,Price,SellPrice,ServiceID")] Part part)
+        public async Task<IActionResult> Create([Bind("Id,PartNumber,Name,Description,Price,SellPrice")] Part part)
         {
             if (ModelState.IsValid)
             {
-                try
-                {
-                    await _partService.CreatePart(part);
-                    return RedirectToAction(nameof(Index));
-                }
-                catch (Exception ex)
-                {
-                    ModelState.AddModelError("", "Произошла ошибка при создании запчасти: " + ex.Message);
-                }
+                _context.Add(part);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
             }
             return View(part);
         }
@@ -72,7 +79,7 @@ namespace RepairShopV1.Controllers
                 return NotFound();
             }
 
-            var part = await _partService.GetPartById(id.Value);
+            var part = await _context.Parts.FindAsync(id);
             if (part == null)
             {
                 return NotFound();
@@ -81,9 +88,11 @@ namespace RepairShopV1.Controllers
         }
 
         // POST: Parts/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,PartNumber,Name,Description,Price,SellPrice,ServiceID")] Part part)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,PartNumber,Name,Description,Price,SellPrice")] Part part)
         {
             if (id != part.Id)
             {
@@ -94,13 +103,21 @@ namespace RepairShopV1.Controllers
             {
                 try
                 {
-                    await _partService.UpdatePart(part);
-                    return RedirectToAction(nameof(Index));
+                    _context.Update(part);
+                    await _context.SaveChangesAsync();
                 }
-                catch (Exception ex)
+                catch (DbUpdateConcurrencyException)
                 {
-                    ModelState.AddModelError("", "Произошла ошибка при обновлении запчасти: " + ex.Message);
+                    if (!PartExists(part.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
                 }
+                return RedirectToAction(nameof(Index));
             }
             return View(part);
         }
@@ -113,7 +130,8 @@ namespace RepairShopV1.Controllers
                 return NotFound();
             }
 
-            var part = await _partService.GetPartById(id.Value);
+            var part = await _context.Parts
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (part == null)
             {
                 return NotFound();
@@ -127,16 +145,19 @@ namespace RepairShopV1.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            try
+            var part = await _context.Parts.FindAsync(id);
+            if (part != null)
             {
-                await _partService.DeletePart(id);
-                return RedirectToAction(nameof(Index));
+                _context.Parts.Remove(part);
             }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError("", "Произошла ошибка при удалении запчасти: " + ex.Message);
-                return RedirectToAction(nameof(Delete), new { id });
-            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        private bool PartExists(int id)
+        {
+            return _context.Parts.Any(e => e.Id == id);
         }
     }
 }
