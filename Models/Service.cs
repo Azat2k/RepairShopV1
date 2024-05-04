@@ -8,7 +8,7 @@
         public DateTime LaborHours { get; set; }
         public decimal LaborPrice { get; set; }
         public int PartId { get; set; }
-        public List<Part>? Parts { get; set; }
+        public List<PartService>? PartServices { get; set; }
         //public int EmployerId { get; set; }
     }
 }

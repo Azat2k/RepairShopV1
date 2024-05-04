@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RepairShopV1.Data;
 
@@ -11,9 +12,11 @@ using RepairShopV1.Data;
 namespace RepairShopV1.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240504032518_FixedModelsPartAndService")]
+    partial class FixedModelsPartAndService
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -67,7 +70,7 @@ namespace RepairShopV1.Migrations
 
                     b.HasIndex("ServiceId");
 
-                    b.ToTable("PartServices");
+                    b.ToTable("PartService");
                 });
 
             modelBuilder.Entity("RepairShopV1.Models.Service", b =>
@@ -103,13 +106,13 @@ namespace RepairShopV1.Migrations
             modelBuilder.Entity("RepairShopV1.Models.PartService", b =>
                 {
                     b.HasOne("RepairShopV1.Models.Part", "Part")
-                        .WithMany("PartServices")
+                        .WithMany("PartService")
                         .HasForeignKey("PartId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("RepairShopV1.Models.Service", "Service")
-                        .WithMany("PartServices")
+                        .WithMany("PartService")
                         .HasForeignKey("ServiceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -121,12 +124,12 @@ namespace RepairShopV1.Migrations
 
             modelBuilder.Entity("RepairShopV1.Models.Part", b =>
                 {
-                    b.Navigation("PartServices");
+                    b.Navigation("PartService");
                 });
 
             modelBuilder.Entity("RepairShopV1.Models.Service", b =>
                 {
-                    b.Navigation("PartServices");
+                    b.Navigation("PartService");
                 });
 #pragma warning restore 612, 618
         }

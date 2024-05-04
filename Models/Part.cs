@@ -1,5 +1,5 @@
 ﻿namespace RepairShopV1.Models
-{
+{   
     public class Part
     {
         public int Id { get; set; }
@@ -9,6 +9,6 @@
         public decimal Price { get; set; }
         public decimal SellPrice { get; set; }
         public int ServiceId { get; set; }
-        public List<Service>? Services { get; set; }
+        public List<PartService>? PartServices { get; set; }
     }
 }

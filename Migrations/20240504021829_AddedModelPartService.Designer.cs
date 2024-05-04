@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RepairShopV1.Data;
 
@@ -11,9 +12,11 @@ using RepairShopV1.Data;
 namespace RepairShopV1.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240504021829_AddedModelPartService")]
+    partial class AddedModelPartService
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,6 +24,21 @@ namespace RepairShopV1.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("PartService", b =>
+                {
+                    b.Property<int>("PartsId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ServicesId")
+                        .HasColumnType("int");
+
+                    b.HasKey("PartsId", "ServicesId");
+
+                    b.HasIndex("ServicesId");
+
+                    b.ToTable("PartService");
+                });
 
             modelBuilder.Entity("RepairShopV1.Models.Part", b =>
                 {
@@ -55,21 +73,6 @@ namespace RepairShopV1.Migrations
                     b.ToTable("Parts");
                 });
 
-            modelBuilder.Entity("RepairShopV1.Models.PartService", b =>
-                {
-                    b.Property<int>("PartId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ServiceId")
-                        .HasColumnType("int");
-
-                    b.HasKey("PartId", "ServiceId");
-
-                    b.HasIndex("ServiceId");
-
-                    b.ToTable("PartServices");
-                });
-
             modelBuilder.Entity("RepairShopV1.Models.Service", b =>
                 {
                     b.Property<int>("Id")
@@ -100,33 +103,19 @@ namespace RepairShopV1.Migrations
                     b.ToTable("Services");
                 });
 
-            modelBuilder.Entity("RepairShopV1.Models.PartService", b =>
+            modelBuilder.Entity("PartService", b =>
                 {
-                    b.HasOne("RepairShopV1.Models.Part", "Part")
-                        .WithMany("PartServices")
-                        .HasForeignKey("PartId")
+                    b.HasOne("RepairShopV1.Models.Part", null)
+                        .WithMany()
+                        .HasForeignKey("PartsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("RepairShopV1.Models.Service", "Service")
-                        .WithMany("PartServices")
-                        .HasForeignKey("ServiceId")
+                    b.HasOne("RepairShopV1.Models.Service", null)
+                        .WithMany()
+                        .HasForeignKey("ServicesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Part");
-
-                    b.Navigation("Service");
-                });
-
-            modelBuilder.Entity("RepairShopV1.Models.Part", b =>
-                {
-                    b.Navigation("PartServices");
-                });
-
-            modelBuilder.Entity("RepairShopV1.Models.Service", b =>
-                {
-                    b.Navigation("PartServices");
                 });
 #pragma warning restore 612, 618
         }
