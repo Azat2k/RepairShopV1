@@ -40,7 +40,10 @@ namespace RepairShopV1.Controllers
             }
 
             var part = await _context.Parts
+                .Include(p => p.PartServices)
+                    .ThenInclude(ps => ps.Service)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (part == null)
             {
                 return NotFound();
