@@ -55,24 +55,37 @@ namespace RepairShopV1.Controllers
         // GET: Parts/Create
         public IActionResult Create()
         {
+            ViewBag.Services = _context.Services.ToList();
             return View();
         }
-
-        // POST: Parts/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,PartNumber,Name,Description,Price,SellPrice")] Part part)
+        public async Task<IActionResult> Create([Bind("PartNumber,Name,Description,Price,SellPrice")] Part part, int[] selectedServices)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(part);
                 await _context.SaveChangesAsync();
+
+                // Добавление связанных с запчастью сервисов
+                if (selectedServices != null)
+                {
+                    foreach (var serviceId in selectedServices)
+                    {
+                        var partService = new PartService { PartId = part.Id, ServiceId = serviceId };
+                        _context.Add(partService);
+                    }
+                    await _context.SaveChangesAsync();
+                }
+
                 return RedirectToAction(nameof(Index));
             }
+
+            // Если ModelState недопустим, повторно установите ViewBag.Services
+            ViewBag.Services = _context.Services.ToList();
             return View(part);
         }
+
 
         // GET: Parts/Edit/5
         public async Task<IActionResult> Edit(int? id)
