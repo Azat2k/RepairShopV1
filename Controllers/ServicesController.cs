@@ -20,6 +20,14 @@ namespace RepairShopV1.Controllers
         }
 
         // GET: Services
+        [HttpGet]
+        public async Task<JsonResult> GetServices()
+        {
+            var services = await _context.Services.ToListAsync();
+            return Json(services);
+        }
+
+        // GET: Services
         public async Task<IActionResult> Index()
         {
             return View(await _context.Services.ToListAsync());

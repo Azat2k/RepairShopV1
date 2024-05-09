@@ -38,16 +38,12 @@
                 <span asp-validation-for="SellPrice" class="text-danger"></span>
             </div>
 
-            <!-- Выбор связанных сервисов -->
-            <div class="form-group">
-                <label class="control-label">Services</label>
-                <select name="selectedServices" class="form-control" multiple>
-                    @foreach (var service in ViewBag.Services)
-                    {
-                        <option value="@service.Id">@service.Name</option>
-                    }
-                </select>
-            </div>
+            
+            <!-- Контейнер для списка сервисов -->
+            <div id="services-container"></div>
+            <!-- Кнопка для добавления сервиса -->
+            <button id="add-service" type="button" class="btn btn-primary">Add Service</button>
+
 
 
 
@@ -66,4 +62,22 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+    <script>
+        $(document).ready(function () {
+            $('#add-service').click(function () {
+                $.ajax({
+                    url: '@Url.Action("GetServices", "Services")',
+                    type: 'GET',
+                    success: function (data) {
+                        var select = $('<select class="form-control" name="selectedServices"></select>');
+                        $.each(data, function (index, service) {
+                            select.append($('<option></option>').val(service.id).text(service.name));
+                        });
+                        $('#services-container').append(select);
+                    }
+                });
+            });
+        });
+    </script>
 }
