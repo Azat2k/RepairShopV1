@@ -72,8 +72,13 @@ namespace RepairShopV1.Controllers
                 {
                     foreach (var serviceId in selectedServices)
                     {
-                        var partService = new PartService { PartId = part.Id, ServiceId = serviceId };
-                        _context.Add(partService);
+                        // Проверяем, существует ли уже такой PartService
+                        var existingPartService = await _context.PartServices.FirstOrDefaultAsync(ps => ps.PartId == part.Id && ps.ServiceId == serviceId);
+                        if (existingPartService == null)
+                        {
+                            var partService = new PartService { PartId = part.Id, ServiceId = serviceId };
+                            _context.Add(partService);
+                        }
                     }
                     await _context.SaveChangesAsync();
                 }
@@ -85,6 +90,8 @@ namespace RepairShopV1.Controllers
             ViewBag.Services = _context.Services.ToList();
             return View(part);
         }
+
+
 
 
         // GET: Parts/Edit/5
