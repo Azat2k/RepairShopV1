@@ -55,7 +55,6 @@ namespace RepairShopV1.Controllers
         // GET: Parts/Create
         public IActionResult Create()
         {
-            ViewBag.Services = _context.Services.ToList();
             return View();
         }
         [HttpPost]
@@ -72,22 +71,14 @@ namespace RepairShopV1.Controllers
                 {
                     foreach (var serviceId in selectedServices)
                     {
-                        // Проверяем, существует ли уже такой PartService
-                        var existingPartService = await _context.PartServices.FirstOrDefaultAsync(ps => ps.PartId == part.Id && ps.ServiceId == serviceId);
-                        if (existingPartService == null)
-                        {
-                            var partService = new PartService { PartId = part.Id, ServiceId = serviceId };
-                            _context.Add(partService);
-                        }
+                        var partService = new PartService { PartId = part.Id, ServiceId = serviceId };
+                        _context.Add(partService);
                     }
                     await _context.SaveChangesAsync();
                 }
 
                 return RedirectToAction(nameof(Index));
             }
-
-            // Если ModelState недопустим, повторно установите ViewBag.Services
-            ViewBag.Services = _context.Services.ToList();
             return View(part);
         }
 
